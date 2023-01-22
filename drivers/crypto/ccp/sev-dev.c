@@ -198,6 +198,7 @@ static int sev_cmd_buffer_len(int cmd)
 	case SEV_CMD_SNP_PLATFORM_STATUS:	return sizeof(struct sev_data_snp_addr);
 	case SEV_CMD_SNP_GUEST_REQUEST:		return sizeof(struct sev_data_snp_guest_request);
 	case SEV_CMD_SNP_CONFIG:		return sizeof(struct sev_user_data_snp_config);
+	case SEV_CMD_SNP_DOWNLOAD_FIRMWARE_EX:  return sizeof(struct sev_user_data_snp_download_firmware_ex);
 	default:				return 0;
 	}
 
@@ -1956,6 +1957,38 @@ e_free:
 	return ret;
 }
 
+static int sev_ioctl_snp_download_firmware_ex(struct sev_issue_cmd *argp)
+{
+	struct sev_user_data_snp_download_firmware_ex input;
+	void *blob = NULL;
+	int ret;
+
+	if (!argp->data)
+		return -EINVAL;
+
+	memset(&input, 0, sizeof(input));
+
+	if (copy_from_user(&input, (void __user *)argp->data, sizeof(input)))
+		return -EFAULT;
+
+	if (input.length != sizeof(input))
+		return -EINVAL;
+
+	if (!IS_ALIGNED(input.fw_len, 32))
+		return -EINVAL;
+
+	blob = psp_copy_user_blob(input.fw_address, input.fw_len);
+	if (IS_ERR(blob))
+		return PTR_ERR(blob);
+
+	input.fw_address = __psp_pa(blob);
+
+	ret = __sev_do_cmd_locked(SEV_CMD_SNP_DOWNLOAD_FIRMWARE_EX, &input, &argp->error);
+
+	kfree(blob);
+	return ret;
+}
+
 static long sev_ioctl(struct file *file, unsigned int ioctl, unsigned long arg)
 {
 	void __user *argp = (void __user *)arg;
@@ -2015,6 +2048,9 @@ static long sev_ioctl(struct file *file, unsigned int ioctl, unsigned long arg)
 		break;
 	case SNP_GET_EXT_CONFIG:
 		ret = sev_ioctl_snp_get_config(&input);
+		break;
+	case SNP_DOWNLOAD_FIRMWARE_EX:
+		ret = sev_ioctl_snp_download_firmware_ex(&input);
 		break;
 	default:
 		ret = -EINVAL;

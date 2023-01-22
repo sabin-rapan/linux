@@ -22,7 +22,7 @@
 #define __psp_pa(x)	__pa(x)
 #endif
 
-#define SEV_FW_BLOB_MAX_SIZE	0x5000	/* 20KB */
+#define SEV_FW_BLOB_MAX_SIZE	0x20000	/* 128KB */
 
 struct sev_snp_certs {
 	void *data;
@@ -124,6 +124,7 @@ enum sev_cmd {
 	SEV_CMD_SNP_PAGE_RECLAIM	= 0xC7,
 	SEV_CMD_SNP_PAGE_UNSMASH	= 0xC8,
 	SEV_CMD_SNP_CONFIG		= 0xC9,
+	SEV_CMD_SNP_DOWNLOAD_FIRMWARE_EX = 0xCA,
 
 	SEV_CMD_MAX,
 };

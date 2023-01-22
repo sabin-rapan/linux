@@ -31,6 +31,7 @@ enum {
 	SNP_PLATFORM_STATUS,
 	SNP_SET_EXT_CONFIG,
 	SNP_GET_EXT_CONFIG,
+	SNP_DOWNLOAD_FIRMWARE_EX,
 
 	SEV_MAX,
 };
@@ -217,6 +218,25 @@ struct sev_user_data_ext_snp_config {
 	__u64 certs_address;		/* In */
 	__u32 certs_len;		/* In */
 };
+
+/**
+ * struct sev_user_data_snp_download_firmware_ex - SNP_DOWNLOAD_FIRMWARE_EX
+ *						command params
+ *
+ * @length: length of this command buffer in bytes.
+ * @fw_address: address of the region that contains an SEV-SNP firmware image.
+ * @fw_len: length of the SEV-SNP firmware in bytes.
+ * @commit: indicates that this command will automatically commit the newly
+ *	installed image
+ */
+struct sev_user_data_snp_download_firmware_ex {
+	__u32 length;
+	__u32 rsvd;
+	__u64 fw_address;
+	__u32 fw_len;
+	__u32 commit:1;
+	__u32 rsvd1:31;
+} __packed;
 
 /**
  * struct sev_issue_cmd - SEV ioctl parameters
