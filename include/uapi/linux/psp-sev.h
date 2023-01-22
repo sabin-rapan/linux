@@ -163,20 +163,29 @@ struct sev_user_data_get_id2 {
  * @major: API major version
  * @minor: API minor version
  * @state: current platform state
+ * @is_rmp_initialized: whether RMP is initialized or not
  * @build: firmware build id for the API version
+ * @mask_chip_id: whether chip id is present in attestation reports or not
+ * @mask_chip_key: whether attestation reports are signed or not
+ * @vlek_en: VLEK hashstick is loaded
  * @guest_count: the number of guest currently managed by the firmware
- * @tcb_version: current TCB version
+ * @current_tcb_version: current TCB version
+ * @reported_tcb_version: reported TCB version
  */
 struct sev_user_data_snp_status {
-	__u8 api_major;		/* Out */
-	__u8 api_minor;		/* Out */
-	__u8 state;		/* Out */
-	__u8 rsvd;
-	__u32 build_id;		/* Out */
-	__u32 rsvd1;
-	__u32 guest_count;	/* Out */
-	__u64 tcb_version;	/* Out */
-	__u64 rsvd2;
+	__u8 api_major;		    /* Out */
+	__u8 api_minor;		    /* Out */
+	__u8 state;		    /* Out */
+	__u8 is_rmp_initialized:1;  /* Out */
+	__u8 rsvd:7;
+	__u32 build_id;		    /* Out */
+	__u32 mask_chip_id:1;	    /* Out */
+	__u32 mask_chip_key:1;	    /* Out */
+	__u32 vlek_en:1;	    /* Out */
+	__u32 rsvd1:29;
+	__u32 guest_count;	    /* Out */
+	__u64 current_tcb_version;  /* Out */
+	__u64 reported_tcb_version; /* Out */
 } __packed;
 
 /*
