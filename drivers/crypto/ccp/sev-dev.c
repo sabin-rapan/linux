@@ -199,6 +199,7 @@ static int sev_cmd_buffer_len(int cmd)
 	case SEV_CMD_SNP_GUEST_REQUEST:		return sizeof(struct sev_data_snp_guest_request);
 	case SEV_CMD_SNP_CONFIG:		return sizeof(struct sev_user_data_snp_config);
 	case SEV_CMD_SNP_DOWNLOAD_FIRMWARE_EX:  return sizeof(struct sev_user_data_snp_download_firmware_ex);
+	case SEV_CMD_SNP_COMMIT:		return sizeof(struct sev_user_data_snp_commit);
 	default:				return 0;
 	}
 
@@ -1989,6 +1990,28 @@ static int sev_ioctl_snp_download_firmware_ex(struct sev_issue_cmd *argp)
 	return ret;
 }
 
+static int sev_ioctl_snp_commit(struct sev_issue_cmd *argp)
+{
+	struct sev_device *sev = psp_master->sev_data;
+	struct sev_user_data_snp_commit input;
+	int ret;
+
+	if (!sev->snp_initialized || !argp->data)
+		return -EINVAL;
+
+	memset(&input, 0, sizeof(input));
+
+	if (copy_from_user(&input, (void __user *)argp->data, sizeof(input)))
+		return -EFAULT;
+
+	if (input.length != sizeof(input))
+		return -EINVAL;
+
+	ret = __sev_do_cmd_locked(SEV_CMD_SNP_COMMIT, &input, &argp->error);
+
+	return ret;
+}
+
 static long sev_ioctl(struct file *file, unsigned int ioctl, unsigned long arg)
 {
 	void __user *argp = (void __user *)arg;
@@ -2051,6 +2074,9 @@ static long sev_ioctl(struct file *file, unsigned int ioctl, unsigned long arg)
 		break;
 	case SNP_DOWNLOAD_FIRMWARE_EX:
 		ret = sev_ioctl_snp_download_firmware_ex(&input);
+		break;
+	case SNP_COMMIT:
+		ret = sev_ioctl_snp_commit(&input);
 		break;
 	default:
 		ret = -EINVAL;

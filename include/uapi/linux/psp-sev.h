@@ -32,6 +32,7 @@ enum {
 	SNP_SET_EXT_CONFIG,
 	SNP_GET_EXT_CONFIG,
 	SNP_DOWNLOAD_FIRMWARE_EX,
+	SNP_COMMIT,
 
 	SEV_MAX,
 };
@@ -236,6 +237,15 @@ struct sev_user_data_snp_download_firmware_ex {
 	__u32 fw_len;
 	__u32 commit:1;
 	__u32 rsvd1:31;
+} __packed;
+
+/**
+ * struct sev_user_data_snp_commit - SNP_COMMIT command params
+ *
+ * @length: length of this command buffer in bytes.
+ */
+struct sev_user_data_snp_commit {
+	__u32 length;
 } __packed;
 
 /**
