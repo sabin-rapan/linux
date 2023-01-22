@@ -33,6 +33,7 @@ enum {
 	SNP_GET_EXT_CONFIG,
 	SNP_DOWNLOAD_FIRMWARE_EX,
 	SNP_COMMIT,
+	SNP_VLEK_LOAD,
 
 	SEV_MAX,
 };
@@ -246,6 +247,32 @@ struct sev_user_data_snp_download_firmware_ex {
  */
 struct sev_user_data_snp_commit {
 	__u32 length;
+} __packed;
+
+/**
+ * struct sev_user_data_snp_vlek_load - SNP_VLEK_LOAD command params
+ *
+ * @length: length of this command buffer in bytes.
+ * @vlek_wrapped_version: version of the wrapped VLEK hashstick structure.
+ *			Must be 0h.
+ * @vlek_wrapped_address: address of a wrapped VLEK hashstick.
+ */
+struct sev_user_data_snp_vlek_load {
+	__u32 length;
+	__u32 vlek_wrapped_version:8;
+	__u32 rsvd:24;
+	__u64 vlek_wrapped_address;
+} __packed;
+
+/**
+ * struct sev_user_data_snp_wrapped_vlek_hashstick - WRAPPED_VLEK_HASHSTICK
+ *						structure layout
+ *
+ * @data: Opaque data received from AMD KDS based on
+ *	SEV Secure Nested Paging Firmware ABI rev 1.54 table 111.
+ */
+struct sev_user_data_snp_wrapped_vlek_hashstick {
+	__u8 data[432];
 } __packed;
 
 /**
