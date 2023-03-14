@@ -1444,6 +1444,7 @@ void do_user_addr_fault(struct pt_regs *regs,
 
 		/* Ask to split the page */
 		flags |= FAULT_FLAG_PAGE_SPLIT;
+		pr_warn("splitting page for address 0x%lx\n", address);
 	}
 
 #ifdef CONFIG_X86_64
