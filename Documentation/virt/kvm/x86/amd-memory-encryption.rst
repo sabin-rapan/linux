@@ -530,6 +530,7 @@ Returns: 0 on success, -negative on error
                 __u64 id_auth_uaddr;
                 __u8 id_block_en;
                 __u8 auth_key_en;
+                __u8 vcek_dis;
                 __u8 host_data[32];
                 __u8 pad[6];
         };

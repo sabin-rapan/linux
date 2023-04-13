@@ -674,7 +674,8 @@ struct sev_data_snp_launch_finish {
 	u64 id_auth_paddr;
 	u8 id_block_en:1;
 	u8 auth_key_en:1;
-	u64 rsvd:62;
+	u8 vcek_dis:1;
+	u64 rsvd:61;
 	u8 host_data[32];
 } __packed;
 
