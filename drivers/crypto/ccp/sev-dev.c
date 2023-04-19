@@ -978,7 +978,7 @@ static int __sev_platform_init_locked(int *error)
 
 	sev = psp->sev_data;
 
-	if (sev->state == SEV_STATE_INIT)
+	if (sev->state == SEV_STATE_INIT || sev->snp_initialized)
 		return 0;
 
 	rc = __sev_snp_init_locked(error);
@@ -1484,7 +1484,7 @@ static int __sev_snp_init_locked(int *error)
 		return rc;
 
 	sev->snp_initialized = true;
-	dev_dbg(sev->dev, "SEV-SNP firmware initialized\n");
+	dev_info(sev->dev, "SEV-SNP firmware initialized\n");
 
 	sev_es_tmr_size = SEV_SNP_ES_TMR_SIZE;
 
